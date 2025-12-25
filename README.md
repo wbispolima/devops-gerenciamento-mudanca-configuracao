@@ -39,7 +39,7 @@ Este repositório contém **recursos complementares** da disciplina **"Gerenciam
 
 O site estático está **publicado e acessível online** através do GitHub Pages:
 
-### 🔗 [Acesse o Site](https://wbispolima.github.io/devops-gerenciamento-mudanca-configuracao/)
+### 🔗 [Acesse o Site](https://wbispolima.github.io/devops-gerenciamento-mudanca-configuracao/site/)
 
 > **Nota:** O link será ativado após a configuração do GitHub Pages.
 
