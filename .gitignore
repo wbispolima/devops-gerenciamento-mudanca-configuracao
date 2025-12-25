@@ -1,0 +1,90 @@
+# Arquivos do Sistema Operacional
+.DS_Store
+Thumbs.db
+.directory
+
+# Arquivos de IDE e Editores
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.sublime-project
+*.sublime-workspace
+.atom/
+
+# Arquivos de Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+crash.log
+override.tf.json
+*_override.tf.json
+*.tfvars
+*.tfvars.json
+!example.tfvars
+
+# Arquivos de Ansible
+*.retry
+.ansible/
+
+# Arquivos de Ambiente e Credenciais
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+*.pub
+secrets/
+credentials/
+
+# Arquivos Temporários
+*.tmp
+*.bak
+*.log
+*.swp
+*.swo
+*~
+
+# Arquivos de Compilação
+*.o
+*.a
+*.so
+*.exe
+*.dll
+
+# Diretórios de Dependências
+node_modules/
+venv/
+env/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+
+# Arquivos de Configuração Sensível
+config.local.yml
+config.local.yaml
+.aws/
+.ssh/
+
+# Arquivos de Cache
+.cache/
+*.cache
+
+# Arquivos de Teste
+.coverage
+htmlcov/
+
+# Arquivos de Sistema
+.AppleDouble
+.LSOverride
+._*
+
+# Arquivos de Backup
+*.backup
+*.bkp

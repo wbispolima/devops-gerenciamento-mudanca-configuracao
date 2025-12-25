@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unidade 2 - Infrastructure as Code com Terraform | IFMT</title>
+  <meta name="description" content="Material didático institucional sobre Infrastructure as Code e Terraform para a Especialização em Engenharia DevOps do IFMT.">
+  <meta name="keywords" content="Infrastructure as Code, Terraform, DevOps, IFMT, Educação a Distância">
+  <meta name="author" content="Professor Waldinei Bispo de Lima">
+  <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="container">
+      <div class="header-content">
+        <a href="#" class="logo" data-page="home" onclick="showPage('home'); return false;">
+          <div class="logo-icon">IFMT</div>
+          <div class="logo-text">
+            <div class="institution">IFMT</div>
+            <div class="subtitle">Especialização DevOps</div>
+          </div>
+        </a>
+        
+        <nav>
+          <a href="#" data-page="home" onclick="showPage('home'); return false;">Início</a>
+          <a href="#" data-page="conceitos" onclick="showPage('conceitos'); return false;">Conceitos</a>
+          <a href="#" data-page="pratica" onclick="showPage('pratica'); return false;">Prática</a>
+        </nav>
+        
+        <button class="menu-button">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main>
+    <!-- PAGE 1: HOME -->
+    <div id="home" class="page active">
+      <!-- Hero Section -->
+      <section class="hero">
+        <div class="container">
+          <div class="hero-content">
+            <div class="hero-text">
+              <div class="badge">Unidade 2 - Especialização DevOps</div>
+              <h1>Infrastructure as Code com <span class="highlight">Terraform</span></h1>
+              <p>Aprenda a provisionar, gerenciar e automatizar sua infraestrutura em nuvem através de código declarativo.</p>
+              
+              <div class="button-group">
+                <a href="#" class="btn btn-primary" onclick="showPage('conceitos'); return false;">
+                  Explorar Conceitos →
+                </a>
+                <a href="#" class="btn btn-secondary" onclick="showPage('pratica'); return false;">
+                  Ver Prática
+                </a>
+              </div>
+              
+              <div class="flex items-center gap-2" style="margin-top: 2rem;">
+                <div style="display: flex; gap: -0.5rem;">
+                  <div style="width: 32px; height: 32px; border-radius: 50%; background-color: #1e40af; color: white; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: bold;">W</div>
+                  <div style="width: 32px; height: 32px; border-radius: 50%; background-color: #0d9488; color: white; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: bold; margin-left: -0.5rem;">T</div>
+                </div>
+                <p style="font-size: 0.875rem; color: #4b5563;">Desenvolvido pelo Prof. Waldinei Bispo de Lima</p>
+              </div>
+            </div>
+            
+            <div>
+              <img src="./images/hero-iac.jpg" alt="Infrastructure as Code Visualization" class="hero-image">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Stats Section -->
+      <section class="stats">
+        <div class="container">
+          <div class="stats-grid">
+            <div class="stat-item">
+              <div class="number">16h</div>
+              <div class="label">Carga Horária Total</div>
+            </div>
+            <div class="stat-item">
+              <div class="number">4</div>
+              <div class="label">Seções Teóricas</div>
+            </div>
+            <div class="stat-item">
+              <div class="number">2</div>
+              <div class="label">Estudos de Caso</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Cards Section -->
+      <section class="cards-section">
+        <div class="container">
+          <div class="section-header">
+            <h2>O que você vai aprender</h2>
+            <p>Domine os conceitos fundamentais e práticos de Infrastructure as Code com Terraform</p>
+          </div>
+          
+          <div class="cards-grid">
+            <div class="card">
+              <div class="card-icon blue">💻</div>
+              <h3>Infrastructure as Code</h3>
+              <p>Compreenda os conceitos fundamentais de IaC, suas limitações da abordagem manual e benefícios da automação.</p>
+            </div>
+            
+            <div class="card">
+              <div class="card-icon teal">☁️</div>
+              <h3>Terraform & HCL</h3>
+              <p>Explore a linguagem HCL, estrutura de projetos e o ciclo de vida do Terraform (init, plan, apply, destroy).</p>
+            </div>
+            
+            <div class="card">
+              <div class="card-icon purple">⚡</div>
+              <h3>Provedores & Recursos</h3>
+              <p>Entenda como o Terraform se conecta a diferentes plataformas, com foco no provedor AWS.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA Section -->
+      <section class="cta">
+        <div class="container">
+          <h2>Pronto para começar?</h2>
+          <p>Explore os conceitos fundamentais de Infrastructure as Code e domine o Terraform</p>
+          <a href="#" class="btn btn-light" onclick="showPage('conceitos'); return false;">
+            Começar Agora →
+          </a>
+        </div>
+      </section>
+    </div>
+
+    <!-- PAGE 2: CONCEITOS -->
+    <div id="conceitos" class="page">
+      <div class="breadcrumb">
+        <div class="container">
+          <a href="#" onclick="showPage('home'); return false;">← Voltar</a>
+        </div>
+      </div>
+
+      <section class="page-header">
+        <div class="container">
+          <h1>Conceitos Fundamentais</h1>
+          <p>Compreenda os pilares teóricos de Infrastructure as Code e como o Terraform revoluciona o gerenciamento de infraestrutura</p>
+        </div>
+      </section>
+
+      <section class="content-section">
+        <div class="container">
+          <!-- Section 1: O que é IaC -->
+          <div class="content-grid">
+            <div class="content-text">
+              <h2>O que é Infrastructure as Code?</h2>
+              <p>Infrastructure as Code (IaC) é um paradigma que trata a definição e o gerenciamento da infraestrutura (redes, servidores, bancos de dados, balanceadores de carga, etc.) da mesma forma que tratamos o código de uma aplicação.</p>
+              <p>Em vez de configurar servidores manualmente através de um console, com IaC descrevemos o estado desejado da infraestrutura em arquivos de configuração declarativos. Esses arquivos se tornam a única fonte da verdade.</p>
+              
+              <ul class="check-list">
+                <li>
+                  <span class="icon">✓</span>
+                  <div>
+                    <h4 style="font-weight: 600; margin-bottom: 0.25rem;">Versionável</h4>
+                    <p>Arquivos podem ser versionados em Git com histórico completo de mudanças</p>
+                  </div>
+                </li>
+                <li>
+                  <span class="icon">✓</span>
+                  <div>
+                    <h4 style="font-weight: 600; margin-bottom: 0.25rem;">Reprodutível</h4>
+                    <p>Crie ambientes idênticos (dev, teste, produção) a partir do mesmo código</p>
+                  </div>
+                </li>
+                <li>
+                  <span class="icon">✓</span>
+                  <div>
+                    <h4 style="font-weight: 600; margin-bottom: 0.25rem;">Testável</h4>
+                    <p>Valide mudanças antes de aplicá-las à produção</p>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <img src="./images/terraform-concept.jpg" alt="Terraform Infrastructure" class="content-image">
+            </div>
+          </div>
+
+          <!-- Section 2: Manual vs IaC -->
+          <div style="margin-top: 5rem;">
+            <h2 style="text-align: center; margin-bottom: 3rem;">Limitações da Abordagem Manual</h2>
+            
+            <div class="comparison-grid">
+              <div class="comparison-card problems">
+                <h3>
+                  <span style="font-size: 1.5rem;">⚠️</span>
+                  Problemas da Abordagem Manual
+                </h3>
+                <ul>
+                  <li><span class="bullet">•</span> <strong>Configuration Drift:</strong> Estado real diverge do documentado</li>
+                  <li><span class="bullet">•</span> <strong>Downtime:</strong> Mudanças requerem paradas do sistema</li>
+                  <li><span class="bullet">•</span> <strong>Erros Humanos:</strong> Execução manual é propensa a falhas</li>
+                  <li><span class="bullet">•</span> <strong>Falta de Rastreabilidade:</strong> Difícil auditar quem fez o quê</li>
+                  <li><span class="bullet">•</span> <strong>Escalabilidade Limitada:</strong> Difícil replicar ambientes</li>
+                </ul>
+              </div>
+
+              <div class="comparison-card benefits">
+                <h3>
+                  <span style="font-size: 1.5rem;">✓</span>
+                  Benefícios do IaC
+                </h3>
+                <ul>
+                  <li><span class="bullet">✓</span> <strong>Velocidade:</strong> Provisione ambientes em minutos</li>
+                  <li><span class="bullet">✓</span> <strong>Consistência:</strong> Todos os ambientes são idênticos</li>
+                  <li><span class="bullet">✓</span> <strong>Redução de Risco:</strong> Testes automatizados e code review</li>
+                  <li><span class="bullet">✓</span> <strong>Auditoria:</strong> Histórico completo de mudanças</li>
+                  <li><span class="bullet">✓</span> <strong>Custo:</strong> Otimize gastos com nuvem</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 3: Terraform -->
+          <div style="margin-top: 5rem;">
+            <div class="content-grid reverse">
+              <div class="content-text">
+                <h2>Introdução ao Terraform</h2>
+                <p>O Terraform é uma ferramenta de orquestração de infraestrutura criada pela HashiCorp que permite definir, provisionar e gerenciar infraestrutura em ambientes de nuvem de forma segura e eficiente.</p>
+                
+                <h3 style="font-size: 1.25rem;">Características Principais</h3>
+                <ul class="check-list">
+                  <li>
+                    <span class="icon">💡</span>
+                    <div>
+                      <h4 style="font-weight: 600; margin-bottom: 0.25rem;">Agnóstico em Relação à Nuvem</h4>
+                      <p>Funciona com AWS, Google Cloud, Azure, OpenStack e muito mais</p>
+                    </div>
+                  </li>
+                  <li>
+                    <span class="icon">💡</span>
+                    <div>
+                      <h4 style="font-weight: 600; margin-bottom: 0.25rem;">Linguagem Declarativa (HCL)</h4>
+                      <p>Descreva o que você quer, não como fazer</p>
+                    </div>
+                  </li>
+                  <li>
+                    <span class="icon">💡</span>
+                    <div>
+                      <h4 style="font-weight: 600; margin-bottom: 0.25rem;">Ciclo de Vida Simples</h4>
+                      <p>init → plan → apply → destroy</p>
+                    </div>
+                  </li>
+                </ul>
+                
+                <p style="margin-top: 1.5rem;">
+                  <a href="https://www.terraform.io/" target="_blank" style="color: #1e40af; font-weight: 600; text-decoration: none;">
+                    Visite o site oficial do Terraform →
+                  </a>
+                </p>
+              </div>
+              <div>
+                <img src="./images/devops-workflow.jpg" alt="DevOps Workflow" class="content-image">
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 4: HCL -->
+          <div style="margin-top: 5rem; background-color: #f0f9ff; border-radius: 1rem; padding: 2rem;">
+            <h2>Linguagem HCL</h2>
+            <p>O Terraform utiliza HCL (HashiCorp Configuration Language), uma linguagem declarativa projetada para ser fácil de ler e escrever por humanos.</p>
+            
+            <div style="background-color: white; border-radius: 0.5rem; padding: 1.5rem; margin-bottom: 1.5rem; border: 1px solid #dbeafe;">
+              <p style="font-size: 0.875rem; color: #4b5563; margin-bottom: 1rem; font-family: 'Courier New', monospace;">Estrutura básica de um bloco HCL:</p>
+              <div class="code-block">BLOCK_TYPE "BLOCK_LABEL" "BLOCK_LABEL" {
+  IDENTIFIER = EXPRESSION
+  # Argumentos atribuem valores a nomes
+}</div>
+            </div>
+
+            <div class="cards-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+              <div style="background-color: white; border-radius: 0.5rem; padding: 1.5rem; border: 1px solid #dbeafe;">
+                <h4 style="font-weight: 600; margin-bottom: 0.5rem;">Blocos</h4>
+                <p style="font-size: 0.875rem; color: #4b5563;">Contêineres para configurações. O tipo define o objeto sendo configurado (resource, variable, provider)</p>
+              </div>
+              <div style="background-color: white; border-radius: 0.5rem; padding: 1.5rem; border: 1px solid #dbeafe;">
+                <h4 style="font-weight: 600; margin-bottom: 0.5rem;">Argumentos</h4>
+                <p style="font-size: 0.875rem; color: #4b5563;">Atribuem valores a nomes dentro de um bloco</p>
+              </div>
+              <div style="background-color: white; border-radius: 0.5rem; padding: 1.5rem; border: 1px solid #dbeafe;">
+                <h4 style="font-weight: 600; margin-bottom: 0.5rem;">Rótulos</h4>
+                <p style="font-size: 0.875rem; color: #4b5563;">Nomes dados a um bloco (ex: tipo de recurso e nome local)</p>
+              </div>
+              <div style="background-color: white; border-radius: 0.5rem; padding: 1.5rem; border: 1px solid #dbeafe;">
+                <h4 style="font-weight: 600; margin-bottom: 0.5rem;">Expressões</h4>
+                <p style="font-size: 0.875rem; color: #4b5563;">Representam um valor, literal ou referência a outros valores</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Next Steps CTA -->
+      <section class="cta">
+        <div class="container">
+          <h2>Próximo Passo: Prática</h2>
+          <p>Agora que você compreende os conceitos fundamentais, explore exemplos práticos e estudos de caso</p>
+          <a href="#" class="btn btn-light" onclick="showPage('pratica'); return false;">
+            Ir para Prática
+          </a>
+        </div>
+      </section>
+    </div>
+
+    <!-- PAGE 3: PRÁTICA -->
+    <div id="pratica" class="page">
+      <div class="breadcrumb">
+        <div class="container">
+          <a href="#" onclick="showPage('home'); return false;">← Voltar</a>
+        </div>
+      </div>
+
+      <section class="page-header">
+        <div class="container">
+          <h1>Prática & Estudos de Caso</h1>
+          <p>Explore exemplos práticos de Infrastructure as Code com Terraform em cenários reais</p>
+        </div>
+      </section>
+
+      <section class="content-section">
+        <div class="container">
+          <!-- Terraform Workflow Infographic -->
+          <div style="margin-bottom: 5rem;">
+            <h2 style="margin-bottom: 2rem;">Fluxo de Trabalho do Terraform</h2>
+            <p style="font-size: 1.125rem; color: #4b5563; margin-bottom: 2rem; line-height: 1.8;">
+              Compreenda como o Terraform processa seu código Infrastructure as Code, desde a escrita do arquivo .tf até o provisionamento dos recursos na nuvem. O fluxo envolve o Developer escrevendo código HCL, o Terraform Core interpretando esse código, os Providers conectando-se aos serviços em nuvem (como AWS), e finalmente os Resources sendo criados.
+            </p>
+            <div style="background-color: white; border-radius: 1rem; padding: 2rem; border: 1px solid #e5e7eb; text-align: center;">
+              <img src="./images/terraform-workflow.png" alt="Fluxo de Trabalho do Terraform" style="max-width: 100%; height: auto; border-radius: 0.5rem;">
+            </div>
+            <div style="background-color: #f0f9ff; border-radius: 0.75rem; padding: 1.5rem; margin-top: 2rem; border-left: 4px solid #1e40af;">
+              <h4 style="font-weight: 600; margin-bottom: 1rem;">Componentes do Fluxo</h4>
+              <ul style="list-style: none; font-size: 0.875rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                <li><strong>Developer:</strong> Escreve arquivos .tf com código HCL</li>
+                <li><strong>Terraform Core:</strong> Interpreta e processa o código</li>
+                <li><strong>Provider (AWS):</strong> Conecta-se ao serviço em nuvem</li>
+                <li><strong>Resources:</strong> S3 Buckets, EC2 Instances, etc.</li>
+                <li><strong>State File:</strong> Mantém o estado da infraestrutura</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Terraform Lifecycle -->
+          <h2 style="margin-bottom: 3rem; margin-top: 3rem;">Ciclo de Vida do Terraform</h2>
+          
+          <div class="lifecycle-grid">
+            <div class="lifecycle-step init">
+              <div class="number">1</div>
+              <h3>init</h3>
+              <p>Inicializa um diretório Terraform, baixa providers e prepara o ambiente</p>
+            </div>
+            <div class="lifecycle-step plan">
+              <div class="number">2</div>
+              <h3>plan</h3>
+              <p>Cria um plano de execução mostrando quais recursos serão criados/modificados</p>
+            </div>
+            <div class="lifecycle-step apply">
+              <div class="number">3</div>
+              <h3>apply</h3>
+              <p>Executa o plano e provisiona os recursos na nuvem</p>
+            </div>
+            <div class="lifecycle-step destroy">
+              <div class="number">4</div>
+              <h3>destroy</h3>
+              <p>Remove todos os recursos gerenciados pelo Terraform</p>
+            </div>
+          </div>
+
+          <div style="background-color: #f3f4f6; border-radius: 0.75rem; padding: 2rem; margin-bottom: 3rem;">
+            <h4 style="font-weight: 600; margin-bottom: 1rem;">Exemplo de Comando</h4>
+            <div class="code-block">$ terraform init
+$ terraform plan -out=tfplan
+$ terraform apply tfplan
+$ terraform destroy</div>
+          </div>
+
+          <!-- Case Study 1 -->
+          <div style="margin-top: 5rem;">
+            <div class="content-grid">
+              <div class="content-text">
+                <div class="badge">Estudo de Caso 1</div>
+                <h2>Website Estático no Amazon S3</h2>
+                <p>Neste caso prático, você aprenderá a provisionar um bucket S3 da Amazon Web Services para hospedar um website estático, comparando a abordagem manual com a automatizada via Terraform.</p>
+                
+                <h3 style="font-size: 1.125rem;">Conceitos Abordados</h3>
+                <ul class="check-list">
+                  <li>
+                    <span class="icon">💻</span>
+                    <span>Criação de buckets S3 com Terraform</span>
+                  </li>
+                  <li>
+                    <span class="icon">💻</span>
+                    <span>Configuração de acesso público</span>
+                  </li>
+                  <li>
+                    <span class="icon">💻</span>
+                    <span>Hospedagem de website estático</span>
+                  </li>
+                  <li>
+                    <span class="icon">💻</span>
+                    <span>Comparação: Manual vs. Terraform</span>
+                  </li>
+                </ul>
+
+                <div style="background-color: #dbeafe; border-radius: 0.5rem; padding: 1.5rem; margin-top: 1.5rem; border-left: 4px solid #1e40af;">
+                  <h4 style="font-weight: 600; margin-bottom: 0.75rem;">Lições Aprendidas</h4>
+                  <ul style="list-style: none; font-size: 0.875rem;">
+                    <li>• Automação reduz tempo de provisionamento de horas para minutos</li>
+                    <li>• Código é mais confiável que procedimentos manuais</li>
+                    <li>• Fácil replicar a mesma infraestrutura em múltiplos ambientes</li>
+                    <li>• Histórico de mudanças fica registrado no Git</li>
+                  </ul>
+                </div>
+
+                <p style="margin-top: 1.5rem;">
+                  <a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket" target="_blank" style="color: #1e40af; font-weight: 600; text-decoration: none;">
+                    Documentação AWS S3 Bucket →
+                  </a>
+                </p>
+              </div>
+
+              <div style="background-color: #f3f4f6; border-radius: 0.75rem; padding: 2rem;">
+                <h4 style="font-weight: 600; margin-bottom: 1rem;">Exemplo de Código</h4>
+                <div class="code-block" style="font-size: 0.75rem;">resource "aws_s3_bucket" "website" {
+  bucket = "meu-website-estatico"
+}
+
+resource "aws_s3_bucket_website_configuration" "website" {
+  bucket = aws_s3_bucket.website.id
+
+  index_document {
+    suffix = "index.html"
+  }
+
+  error_document {
+    key = "error.html"
+  }
+}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Case Study 2 -->
+          <div style="margin-top: 5rem;">
+            <div class="content-grid reverse">
+              <div class="content-text">
+                <div class="badge">Estudo de Caso 2</div>
+                <h2>Instância EC2 com Manipulações de Recursos</h2>
+                <p>Aprenda a provisionar uma instância EC2 na AWS com Terraform, incluindo configurações de rede, segurança e manipulações de recursos durante o ciclo de vida.</p>
+                
+                <h3 style="font-size: 1.125rem;">Conceitos Abordados</h3>
+                <ul class="check-list">
+                  <li>
+                    <span class="icon">🗄️</span>
+                    <span>Provisionamento de instâncias EC2</span>
+                  </li>
+                  <li>
+                    <span class="icon">🗄️</span>
+                    <span>Configuração de VPC e Security Groups</span>
+                  </li>
+                  <li>
+                    <span class="icon">🗄️</span>
+                    <span>Manipulação de recursos (update, replace)</span>
+                  </li>
+                  <li>
+                    <span class="icon">🗄️</span>
+                    <span>State management e outputs</span>
+                  </li>
+                </ul>
+
+                <div style="background-color: #ccfbf1; border-radius: 0.5rem; padding: 1.5rem; margin-top: 1.5rem; border-left: 4px solid #0d9488;">
+                  <h4 style="font-weight: 600; margin-bottom: 0.75rem;">Pontos-Chave</h4>
+                  <ul style="list-style: none; font-size: 0.875rem;">
+                    <li>• O Terraform gerencia o estado da infraestrutura</li>
+                    <li>• Mudanças no código geram planos de execução claros</li>
+                    <li>• Alguns recursos são substituídos, outros são atualizados</li>
+                    <li>• Outputs permitem acessar informações dos recursos criados</li>
+                  </ul>
+                </div>
+
+                <p style="margin-top: 1.5rem;">
+                  <a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/instance" target="_blank" style="color: #0d9488; font-weight: 600; text-decoration: none;">
+                    Documentação AWS EC2 Instance →
+                  </a>
+                </p>
+              </div>
+
+              <div style="background-color: #f3f4f6; border-radius: 0.75rem; padding: 2rem;">
+                <h4 style="font-weight: 600; margin-bottom: 1rem;">Exemplo de Código</h4>
+                <div class="code-block" style="font-size: 0.75rem;">resource "aws_instance" "web" {
+  ami           = "ami-0c55b159cbfafe1f0"
+  instance_type = "t2.micro"
+  
+  vpc_security_group_ids = [
+    aws_security_group.web.id
+  ]
+
+  tags = {
+    Name = "WebServer"
+  }
+}
+
+output "instance_ip" {
+  value = aws_instance.web.public_ip
+}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Resources -->
+          <div style="margin-top: 5rem; background-color: #f0f9ff; border-radius: 1rem; padding: 2rem;">
+            <h2 style="margin-bottom: 2rem;">Recursos Adicionais</h2>
+            
+            <div class="resources-grid">
+              <a href="https://www.terraform.io/docs" target="_blank" class="resource-card">
+                <div class="icon">📚</div>
+                <h3>Documentação Oficial</h3>
+                <p>Acesse a documentação completa do Terraform com guias, referências e exemplos</p>
+              </a>
+
+              <a href="https://registry.terraform.io/" target="_blank" class="resource-card">
+                <div class="icon">💻</div>
+                <h3>Terraform Registry</h3>
+                <p>Explore providers, módulos e exemplos compartilhados pela comunidade</p>
+              </a>
+
+              <a href="https://learn.hashicorp.com/terraform" target="_blank" class="resource-card">
+                <div class="icon">🗄️</div>
+                <h3>HashiCorp Learn</h3>
+                <p>Tutoriais interativos e cursos sobre Terraform e DevOps</p>
+              </a>
+
+              <a href="https://www.terraform.io/community" target="_blank" class="resource-card">
+                <div class="icon">👥</div>
+                <h3>Comunidade Terraform</h3>
+                <p>Conecte-se com outros usuários, faça perguntas e compartilhe experiências</p>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Next Steps CTA -->
+      <section class="cta">
+        <div class="container">
+          <h2>Próxima Etapa</h2>
+          <p>Você está preparado para a Unidade 3: Gerenciamento de Configuração com Ansible</p>
+          <a href="#" class="btn btn-light" onclick="showPage('home'); return false;">
+            Voltar ao Início
+          </a>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-grid">
+          <div class="footer-section">
+            <h3>IFMT</h3>
+            <p>Instituto Federal de Mato Grosso</p>
+            <p>Centro de Referência em Educação a Distância (CREAD)</p>
+            <p style="color: #9ca3af;">Cuiabá, Mato Grosso</p>
+          </div>
+
+          <div class="footer-section">
+            <h3>Disciplina</h3>
+            <p><strong>Especialização em Engenharia DevOps</strong></p>
+            <p>Gerenciamento de Mudanças, Configuração e Infraestrutura</p>
+            <p style="color: #9ca3af;">Unidade 2: Infrastructure as Code com Terraform</p>
+          </div>
+
+          <div class="footer-section">
+            <h3>Professor</h3>
+            <p><strong>Me. Waldinei Bispo de Lima</strong></p>
+            <p style="color: #9ca3af;">waldinei.bispo@ifmt.edu.br</p>
+            <p style="color: #9ca3af;">Período: 9 de março a 29 de março de 2026</p>
+          </div>
+        </div>
+
+        <div class="footer-divider">
+          <div class="material-declaration">
+            <p><strong>Material Didático Institucional</strong></p>
+            <p>Este material é parte integrante da disciplina de Gerenciamento de Mudanças, Configuração e Infraestrutura do curso de Especialização em Engenharia DevOps, oferecido pelo Instituto Federal de Mato Grosso através do Centro de Referência em Educação a Distância (CREAD).</p>
+            <p>Conteúdo acadêmico desenvolvido pelo Professor Me. Waldinei Bispo de Lima. Diagramação e organização do material com auxílio da inteligência artificial Manus.</p>
+          </div>
+
+          <div class="footer-copyright">
+            <p>© 2026 Instituto Federal de Mato Grosso. Todos os direitos reservados.</p>
+            <p>Proibida a reprodução total ou parcial sem autorização prévia.</p>
+            <p style="margin-top: 1rem; color: #9ca3af;">Desenvolvido com ♥ para educação de qualidade</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="./js/script.js"></script>
+</body>
+</html>
