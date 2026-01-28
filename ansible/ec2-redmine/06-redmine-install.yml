@@ -1,0 +1,95 @@
+# ============================================================================
+# 06-REDMINE-INSTALL.YML - Instalar Redmine
+# ============================================================================
+#
+# DESCRICAO:
+# Esta tarefa instala o Redmine 5.1.2 com todas as suas dependências.
+# Inclui instalação de pacotes, criação de usuário, download e extração.
+#
+# TAREFAS EXECUTADAS:
+# 1. Instalar dependências do sistema (Ruby, Node.js, etc.)
+# 2. Criar usuário 'redmine' do sistema
+# 3. Criar diretório /opt/redmine
+# 4. Baixar Redmine 5.1.2
+# 5. Extrair arquivo ZIP
+# 6. Mover arquivos para /opt/redmine
+# 7. Criar subdiretórios necessários
+# 8. Definir permissões corretas
+#
+# NOTA:
+# Este script é autocontido: inclui todas as dependências necessárias
+# para o Redmine funcionar, mesmo que não tenham sido instaladas antes.
+#
+# TEMPO ESTIMADO: 5-10 minutos
+#
+# ============================================================================
+
+# Instalar pacotes necessários para o Redmine
+- name: Instalar pacotes necessários para o Redmine
+  ansible.builtin.apt:
+    name:
+      - curl
+      - git
+      - build-essential
+      - software-properties-common
+      - ruby-full
+      - imagemagick
+      - libssl-dev
+      - libreadline-dev
+      - zlib1g-dev
+      - nodejs
+      - bundler
+    state: present
+    update_cache: yes
+
+# Criar usuário redmine do sistema
+- name: Create redmine system user and add to www-data group
+  ansible.builtin.user:
+    name: redmine
+    comment: "Redmine system user"
+    shell: /bin/bash
+    create_home: yes
+    groups: www-data
+    append: yes
+
+# Criar diretório para Redmine
+- name: Ensure the necessary directories are present
+  ansible.builtin.file:
+    path: /opt/redmine
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: '0755'
+
+# Baixar Redmine 5.1.2
+- name: Download Redmine 5.0.1
+  ansible.builtin.get_url:
+    url: https://www.redmine.org/releases/redmine-5.1.2.zip
+    dest: /tmp/redmine-5.1.2.zip
+
+# Extrair arquivo ZIP
+- name: Unzip Redmine package in /tmp
+  ansible.builtin.unarchive:
+    src: /tmp/redmine-5.1.2.zip
+    dest: /tmp
+    remote_src: yes
+
+# Mover arquivos para /opt/redmine
+- name: Move Redmine files to /opt/redmine
+  ansible.builtin.shell: |
+    mv /tmp/redmine-5.1.2/* /opt/redmine/
+
+# Criar subdiretórios necessários
+- name: Ensure necessary subdirectories are present
+  ansible.builtin.shell: |
+    mkdir -p /opt/redmine/tmp /opt/redmine/tmp/pdf /opt/redmine/public/plugin_assets
+
+# Definir proprietário dos diretórios
+- name: Set permissions for Redmine directories
+  ansible.builtin.shell: |
+    sudo chown -R www-data:www-data /opt/redmine/files /opt/redmine/log /opt/redmine/tmp /opt/redmine/public/plugin_assets /opt/redmine/public
+
+# Definir permissões dos diretórios
+- name: Set permissions for Redmine directories
+  ansible.builtin.shell: |
+    sudo chmod -R 755 /opt/redmine/files /opt/redmine/log /opt/redmine/tmp /opt/redmine/public/plugin_assets /opt/redmine/public

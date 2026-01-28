@@ -1,0 +1,141 @@
+# ============================================================================
+# 05-MYSQL.YML - Instalar e Configurar MySQL
+# ============================================================================
+#
+# DESCRICAO:
+# Esta tarefa instala e configura o MySQL 8.0 como banco de dados
+# para o Redmine. Inclui hardening de segurança e otimizações.
+#
+# TAREFAS EXECUTADAS:
+# 1. Instalar MySQL Server, Client e bibliotecas Python
+# 2. Iniciar e habilitar serviço MySQL
+# 3. Definir senha do usuário root
+# 4. Remover usuários anônimos
+# 5. Remover banco de dados de teste
+# 6. Configurar MySQL para escutar apenas localhost
+# 7. Desativar carregamento de arquivos locais
+# 8. Ativar SQL Strict Mode
+# 9. Garantir autenticação local apenas para root
+# 10. Desativar conexões inseguras (não SSL/TLS)
+#
+# SEGURANCA:
+# - Senha root: Senha_12_F4c1l (altere em produção!)
+# - Apenas conexões locais permitidas
+# - Modo estrito ativado
+# - Usuários anônimos removidos
+#
+# TEMPO ESTIMADO: 3-5 minutos
+#
+# ============================================================================
+
+# Instalar pacotes necessários para MySQL e Ansible
+- name: Instalar pacotes necessários para MySQL e Ansible
+  ansible.builtin.apt:
+    name:
+      - mysql-server
+      - mysql-client
+      - libmysqlclient-dev
+      - python3-pymysql
+    state: present
+    update_cache: yes
+
+# Iniciar e habilitar o serviço MySQL
+- name: Iniciar e habilitar o serviço MySQL
+  ansible.builtin.systemd:
+    name: mysql
+    state: started
+    enabled: yes
+
+# Definir a senha do root do MySQL
+- name: Definir a senha do root do MySQL
+  ansible.builtin.shell: |
+    mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'Senha_12_F4c1l';"
+  args:
+    executable: /bin/bash
+
+# Recarregar as tabelas de privilégios
+- name: Recarregar as tabelas de privilégios
+  ansible.builtin.shell: mysql -u root -pSenha_12_F4c1l -e "FLUSH PRIVILEGES;"
+
+# Remover usuários anônimos do MySQL
+- name: Remover usuários anônimos do MySQL
+  community.mysql.mysql_user:
+    name: ''
+    host_all: yes
+    state: absent
+    login_user: root
+    login_password: "Senha_12_F4c1l"
+
+# Remover banco de dados de teste do MySQL
+- name: Remover banco de dados de teste do MySQL
+  community.mysql.mysql_db:
+    name: test
+    state: absent
+    login_user: root
+    login_password: "Senha_12_F4c1l"
+
+# Garantir que o serviço MySQL esteja em execução
+- name: Garantir que o serviço MySQL esteja em execução
+  ansible.builtin.systemd:
+    name: mysql
+    state: started
+    enabled: yes
+
+# Restringir o acesso remoto ao MySQL
+- name: Configurar MySQL para escutar apenas no localhost
+  ansible.builtin.lineinfile:
+    path: /etc/mysql/mysql.conf.d/mysqld.cnf
+    regexp: '^bind-address'
+    line: 'bind-address = 127.0.0.1'
+    state: present
+
+# Reiniciar o serviço MySQL após configurar o bind-address
+- name: Reiniciar o serviço MySQL após configurar o bind-address
+  ansible.builtin.systemd:
+    name: mysql
+    state: restarted
+
+# Remover o carregamento de plugins desnecessários
+- name: Desativar o carregamento de arquivos locais no MySQL
+  ansible.builtin.shell: |
+    mysql -u root -pSenha_12_F4c1l -e "SET GLOBAL local_infile = 0;"
+  args:
+    executable: /bin/bash
+
+# Configurar o modo estrito para maior segurança
+- name: Ativar SQL Strict Mode
+  ansible.builtin.lineinfile:
+    path: /etc/mysql/mysql.conf.d/mysqld.cnf
+    regexp: '^sql_mode'
+    line: 'sql_mode = "STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION"'
+    state: present
+
+# Reiniciar o serviço MySQL após configurar o SQL Strict Mode
+- name: Reiniciar o serviço MySQL após configurar o SQL Strict Mode
+  ansible.builtin.systemd:
+    name: mysql
+    state: restarted
+
+# Garantir que o root só possa autenticar-se localmente
+- name: Garantir que o root só possa autenticar-se localmente
+  community.mysql.mysql_user:
+    name: root
+    host: localhost
+    password: "Senha_12_F4c1l"
+    login_user: root
+    login_password: "Senha_12_F4c1l"
+    state: present
+    column_case_sensitive: false
+
+# Verificar e desativar conexões antigas não seguras
+- name: Desativar conexões inseguras (não SSL/TLS)
+  ansible.builtin.shell: |
+    mysql -u root -pSenha_12_F4c1l -e "SET GLOBAL require_secure_transport = ON;"
+  args:
+    executable: /bin/bash
+
+# Reiniciar o serviço MySQL após todas as configurações
+- name: Reiniciar o serviço MySQL após todas as configurações
+  ansible.builtin.systemd:
+    name: mysql
+    state: restarted

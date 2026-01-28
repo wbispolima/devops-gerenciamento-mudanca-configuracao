@@ -3,7 +3,7 @@
 # ============================================================================
 # Este arquivo contém a definição dos recursos principais:
 # - Security Group: Controla o acesso à instância (portas 22 e 80)
-# - Instância EC2: Máquina virtual Ubuntu 24.04 LTS
+# - Instância EC2: Máquina virtual Ubuntu 22.04 LTS
 #
 # Documentação:
 # - Security Group: https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group
@@ -19,9 +19,9 @@
 # IMPORTANTE: Em produção, restrinja as origens de acesso (CIDR blocks).
 # ============================================================================
 
-resource "aws_security_group" "site_nginx_sg" {
-  name_prefix = "site-nginx-"
-  description = "Security Group para site Nginx - Especializacao DevOps"
+resource "aws_security_group" "redmine_nginx_sg" {
+  name_prefix = "redmine-nginx-"
+  description = "Security Group para redmine-nginx - Especializacao DevOps"
 
   # Regra de entrada: SSH (porta 22)
   ingress {
@@ -41,14 +41,6 @@ resource "aws_security_group" "site_nginx_sg" {
     description = "HTTP access"
   }
 
-  # # Regra de entrada: HTTPS (porta 443) - COMENTADA
-  # ingress {
-  #   from_port   = 443
-  #   to_port     = 443
-  #   protocol    = "tcp"
-  #   cidr_blocks = ["0.0.0.0/0"]
-  #   description = "HTTPS access"
-  # }
 
   # Regra de saída: Permitir todo o tráfego de saída
   egress {
@@ -60,30 +52,30 @@ resource "aws_security_group" "site_nginx_sg" {
   }
 
   tags = {
-    Name = "site-nginx-sg"
+    Name = "redmine-nginx-sg"
   }
 }
 
 # ============================================================================
 # INSTÂNCIA EC2
 # ============================================================================
-# Cria uma instância EC2 com Ubuntu 24.04 LTS.
+# Cria uma instância EC2 com Ubuntu 22.04 LTS.
 # A instância será acessível via SSH e HTTP.
 #
 # Recursos:
-# - AMI: Ubuntu 22.04 LTS (us-east-1)
+# - AMI: Ubuntu 22.04 LTS (sa-east-1)
 # - Tipo: t2.micro (elegível para free tier)
 # - Chave: ifmt-devops-iac.pem
 # ============================================================================
 
-resource "aws_instance" "site_nginx" {
+resource "aws_instance" "redmine_nginx" {
   # Configuração básica
   ami           = var.ami_ubuntu
   instance_type = var.instance_type
   key_name      = var.key_name
 
   # Associar Security Group
-  vpc_security_group_ids = [aws_security_group.site_nginx_sg.id]
+  vpc_security_group_ids = [aws_security_group.redmine_nginx_sg.id]
 
   # Habilitar IP público
   associate_public_ip_address = var.enable_public_ip
@@ -95,13 +87,21 @@ resource "aws_instance" "site_nginx" {
     http_put_response_hop_limit = 1
   }
 
+  # Configuração do volume raiz
+  root_block_device {
+  volume_size           = var.root_volume_size
+  volume_type           = "gp3"
+  delete_on_termination = true
+}
+
+
   # Monitoramento detalhado
   monitoring = true
 
   # Tags para identificação
   tags = merge(
     {
-      Name = "site-nginx-${var.ambiente}"
+      Name = "redmine-nginx-${var.ambiente}"
     },
     var.tags_adicionais
   )

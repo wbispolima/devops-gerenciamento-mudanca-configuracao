@@ -1,0 +1,63 @@
+# ============================================================================
+# 02-ALLBASIC.YML - Instalar Utilitários Básicos
+# ============================================================================
+#
+# DESCRICAO:
+# Esta tarefa instala pacotes utilitários essenciais para um servidor
+# de produção Debian 12. Inclui ferramentas de linha de comando, gerenciamento
+# de arquivos, monitoramento e desenvolvimento.
+#
+# PACOTES INSTALADOS:
+# - Compressão: unzip, zip
+# - Download: curl, wget
+# - Editores: vim, nano
+# - Versionamento: git
+# - Monitoramento: htop, net-tools
+# - Multiplexação: tmux, screen
+# - Utilitários: rsync, jq, lynx, tree, dialog
+# - Desenvolvimento: pkg-config, shared-mime-info
+#
+# APOS INSTALACAO:
+# O servidor é reiniciado para aplicar todas as atualizações de forma segura.
+#
+# TEMPO ESTIMADO: 5-10 minutos (incluindo reboot)
+#
+# ============================================================================
+
+---
+- name: Instalar utilitários básicos
+  ansible.builtin.apt:
+    name:
+      - unzip
+      - zip
+      - curl
+      - wget
+      - vim
+      - git
+      - htop
+      - net-tools
+      - nano
+      - tmux
+      - rsync
+      - jq
+      - lynx
+      - tree
+      - screen
+      - dialog
+      - shared-mime-info
+      - pkg-config
+    state: present
+    update_cache: yes
+
+- name: Reiniciar o servidor
+  reboot:
+    reboot_timeout: 600
+    msg: "Reiniciando o servidor para aplicar atualizações"
+
+- name: Esperar até que a máquina volte a ficar disponível
+  wait_for_connection:
+    timeout: 500
+
+- name: Continuar com outras tarefas após o reboot
+  debug:
+    msg: "A máquina reiniciou com sucesso e estamos continuando com as tarefas restantes."

@@ -1,0 +1,80 @@
+# ============================================================================
+# 00-MAIN.YML - Playbook Principal
+# ============================================================================
+#
+# DESCRICAO:
+# Este é o playbook principal que orquestra toda a instalação e configuração
+# do Redmine 5.1 em uma instância EC2 com Ubuntu 24.04.
+#
+# SEQUENCIA DE EXECUCAO:
+# O playbook executa as tarefas na ordem abaixo, incluindo arquivos YAML
+# separados para cada etapa. Cada arquivo é autocontido e pode ser
+# executado independentemente se necessário.
+#
+# COMO USAR:
+# ansible-playbook -i hosts.ini 00-main.yml
+#
+# TEMPO ESTIMADO: 15-20 minutos
+#
+# DESENVOLVIDO COM AUXILIO DA IA MANUS
+# ============================================================================
+
+---
+- name: Instalar e Configurar Redmine 5.1 em Ubuntu 24.04
+  hosts: servervalidade
+  become: true
+  
+  # ========================================================================
+  # TAREFAS PRINCIPAIS
+  # ========================================================================
+  # Cada tarefa inclui um arquivo YAML separado com suas respectivas
+  # configurações, comandos e handlers.
+  
+  tasks:
+    # ====================================================================
+    # ETAPA 1: Atualizar Sistema Operacional
+    # ====================================================================
+    - name: Atualizar pacotes
+      ansible.builtin.include_tasks: 01-update.yml
+
+    # ====================================================================
+    # ETAPA 2: Instalar Utilitários Básicos
+    # ====================================================================
+    - name: Instalando utilitários básicos
+      ansible.builtin.include_tasks: 02-allbasic.yml
+
+    # ====================================================================
+    # ETAPA 3: Criar Usuários do Sistema
+    # ====================================================================
+    - name: Criar usuários no sistema
+      ansible.builtin.include_tasks: 03-createuser.yml
+
+    # ====================================================================
+    # ETAPA 4: Instalar e Configurar Nginx
+    # ====================================================================
+    - name: Instalar e configurar Nginx
+      ansible.builtin.include_tasks: 04-nginx.yml
+
+    # ====================================================================
+    # ETAPA 5: Instalar e Configurar MySQL
+    # ====================================================================
+    - name: Instalar MySQL
+      ansible.builtin.include_tasks: 05-mysql.yml
+
+    # ====================================================================
+    # ETAPA 6: Instalar Redmine
+    # ====================================================================
+    - name: Instalando Redmine
+      ansible.builtin.include_tasks: 06-redmine-install.yml
+
+    # ====================================================================
+    # ETAPA 7: Configurar Redmine
+    # ====================================================================
+    - name: Configurar Redmine
+      ansible.builtin.include_tasks: 07-redmine-configure.yml
+
+    # ====================================================================
+    # ETAPA 8: Configurar Nginx como Proxy Reverso para Redmine
+    # ====================================================================
+    - name: Configurar Nginx para Redmine
+      ansible.builtin.include_tasks: 08-redmine-configure-gninx.yml

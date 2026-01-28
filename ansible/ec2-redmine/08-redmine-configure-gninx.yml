@@ -1,0 +1,131 @@
+# ============================================================================
+# 08-REDMINE-CONFIGURE-NGINX.YML - Configurar Nginx para Redmine
+# ============================================================================
+#
+# DESCRICAO:
+# Esta tarefa configura o Nginx como servidor web para o Redmine.
+# Instala o módulo Passenger para executar aplicações Rails,
+# cria configuração de virtual host e define permissões.
+#
+# TAREFAS EXECUTADAS:
+# 1. Instalar pacotes necessários para GPG e repositórios
+# 2. Adicionar chave GPG do Phusion Passenger
+# 3. Adicionar repositório Phusion Passenger
+# 4. Instalar módulo Passenger para Nginx
+# 5. Criar link simbólico do módulo Passenger
+# 6. Criar configuração do virtual host Nginx
+# 7. Ativar o site no Nginx
+# 8. Alterar proprietário de /opt/redmine para redmine:redmine
+# 9. Ajustar permissões de secrets.yml
+# 10. Adicionar www-data ao grupo redmine
+# 11. Reiniciar Nginx
+#
+# VARIAVEL NECESSARIA:
+# - domain_name_tarefas: Domínio para o Redmine (ex: redmine.esalabifmt.com.br)
+#
+# NOTA:
+# Passenger é um módulo que permite executar aplicações Rails
+# diretamente no Nginx, sem necessidade de servidor de aplicação separado.
+#
+# TEMPO ESTIMADO: 5-10 minutos
+#
+# ============================================================================
+
+---
+# Instalar pacotes necessários para GPG
+- name: Instalar pacotes necessários para o apt
+  apt:
+    name: 
+      - dirmngr
+      - gnupg
+      - apt-transport-https
+      - ca-certificates
+      - curl
+    state: present
+    update_cache: yes
+
+# Adicionar chave GPG do Phusion Passenger
+- name: Adicionar chave GPG do Phusion Passenger
+  apt_key:
+    url: https://oss-binaries.phusionpassenger.com/auto-software-signing-gpg-key.txt
+    state: present
+
+# Adicionar repositório Phusion Passenger
+- name: Adicionar repositório Phusion Passenger
+  apt_repository:
+    repo: "deb https://oss-binaries.phusionpassenger.com/apt/passenger {{ ansible_lsb.codename }} main"
+    state: present
+
+# Atualizar cache do apt
+- name: Atualizar cache do apt
+  apt:
+    update_cache: yes
+
+# Instalar módulo Passenger para Nginx
+- name: Instalar o módulo Passenger para o Nginx
+  apt:
+    name: libnginx-mod-http-passenger
+    state: present
+    update_cache: yes
+
+# Criar link simbólico para o módulo Passenger
+- name: Criar link simbólico para o módulo Passenger do Nginx
+  file:
+    src: /usr/share/nginx/modules-available/mod-http-passenger.load
+    dest: /etc/nginx/modules-enabled/50-mod-http-passenger.conf
+    state: link
+
+# Criar configuração do virtual host Nginx
+- name: Criar arquivo de configuração para o servidor Nginx, para o domínio {{ domain_name_tarefas }}
+  copy:
+    dest: /etc/nginx/sites-available/{{ domain_name_tarefas }}
+    content: |
+      server {
+          listen 80;
+          server_name {{ domain_name_tarefas }} www.{{ domain_name_tarefas }};
+
+          root /opt/redmine/public;
+          passenger_enabled on;
+          passenger_ruby /usr/bin/ruby;
+
+          client_max_body_size 10m;
+
+          access_log /var/log/nginx/{{ domain_name_tarefas }}.access.log;
+          error_log /var/log/nginx/{{ domain_name_tarefas }}.error.log;
+      }
+
+# Ativar o site no Nginx
+- name: Criar link simbólico do site para sites-enabled
+  file:
+    src: /etc/nginx/sites-available/{{ domain_name_tarefas }}
+    dest: /etc/nginx/sites-enabled/{{ domain_name_tarefas }}
+    state: link
+
+# Alterar proprietário de /opt/redmine
+- name: Alterar a propriedade do diretório /opt/redmine para redmine:redmine
+  file:
+    path: /opt/redmine
+    owner: redmine
+    group: redmine
+    recurse: yes
+
+# Ajustar permissões de secrets.yml
+- name: Alterar permissões do arquivo /opt/redmine/config/secrets.yml
+  file:
+    path: /opt/redmine/config/secrets.yml
+    mode: '0640'
+
+# Adicionar www-data ao grupo redmine
+- name: Adicionar o usuário www-data ao grupo redmine
+  user:
+    name: www-data
+    groups: redmine
+    append: yes
+
+# Reiniciar Nginx
+- name: Reiniciar o serviço Nginx
+  service:
+    name: nginx
+    state: restarted
+  register: nginx_restart_result
+  ignore_errors: yes

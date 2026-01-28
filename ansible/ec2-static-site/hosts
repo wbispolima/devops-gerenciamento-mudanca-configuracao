@@ -9,7 +9,7 @@
 
 [webservers]
 # IP da instância EC2 criada pelo Terraform
-site_nginx ansible_host=56.124.17.90 ansible_user=ubuntu ansible_ssh_private_key_file=../../ifmt-devops-iac.pem
+site_nginx ansible_host=54.233.53.8 ansible_user=ubuntu ansible_ssh_private_key_file=../../ifmt-devops-iac.pem
 
 # Variáveis de grupo
 [webservers:vars]

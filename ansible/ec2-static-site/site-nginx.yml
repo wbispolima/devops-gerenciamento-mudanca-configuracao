@@ -21,8 +21,8 @@
   # ========================================================================
   
   vars:
-    domain_name: site.esalabifmt.com.br
-    web_root: /var/www/site.esalabifmt.com.br/html
+    domain_name: esalabifmt.com.br
+    web_root: /var/www/esalabifmt.com.br/html
     nginx_user: www-data
     nginx_group: www-data
 

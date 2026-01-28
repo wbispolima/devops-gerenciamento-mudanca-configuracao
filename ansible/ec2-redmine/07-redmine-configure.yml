@@ -1,0 +1,130 @@
+# ============================================================================
+# 07-REDMINE-CONFIGURE.YML - Configurar Redmine
+# ============================================================================
+#
+# DESCRICAO:
+# Esta tarefa configura o Redmine para funcionar em produção.
+# Inclui configuração de banco de dados, instalação de gems,
+# migração de dados e geração de chaves secretas.
+#
+# TAREFAS EXECUTADAS:
+# 1. Copiar arquivo de exemplo database.yml
+# 2. Configurar conexão com MySQL
+# 3. Criar banco de dados Redmine
+# 4. Criar usuário do banco de dados
+# 5. Instalar Bundler
+# 6. Ajustar dependências no Gemfile
+# 7. Instalar gems com Bundler
+# 8. Gerar token secreto
+# 9. Migrar banco de dados
+# 10. Carregar dados padrão (pt-BR)
+# 11. Gerar secret_key_base
+# 12. Criar arquivo secrets.yml
+#
+# CREDENCIAIS:
+# - Usuário MySQL root: root / Senha_12_F4c1l
+# - Usuário Redmine: redmine / Senha_12
+# - Banco de dados: redmine
+#
+# TEMPO ESTIMADO: 10-15 minutos
+#
+# ============================================================================
+
+# Copiar arquivo de exemplo database.yml
+- name: Copiar database.yml de exemplo
+  ansible.builtin.shell: |
+    cp /opt/redmine/config/database.yml.example /opt/redmine/config/database.yml
+
+# Configurar database.yml para MySQL
+- name: Configurar database.yml para Redmine (produção)
+  ansible.builtin.shell: |
+    sed -i '/^production:/,/^[^[:space:]]/ {
+        /^production:/! {
+            /^[[:space:]]*$/! s/username:.*/username: redmine/
+            /^[[:space:]]*$/! s/password:.*/password: "Senha_12"/
+            /^[[:space:]]*$/! s/database:.*/database: redmine/
+        }
+    }' /opt/redmine/config/database.yml
+
+# Criar banco de dados Redmine
+- name: Criar banco de dados Redmine
+  community.mysql.mysql_db:
+    name: redmine
+    state: present
+    login_user: root
+    login_password: "Senha_12_F4c1l"
+
+# Criar usuário do banco de dados Redmine
+- name: Criar usuário do banco de dados Redmine
+  community.mysql.mysql_user:
+    name: redmine
+    password: "Senha_12"
+    priv: 'redmine.*:ALL'
+    state: present
+    login_user: root
+    login_password: "Senha_12_F4c1l"
+
+# Instalar Bundler
+- name: Instalar Bundler
+  ansible.builtin.shell: |
+    gem install bundler -v 2.4.22
+
+# Ajustar dependências no Gemfile
+- name: Ajustar dependências no Gemfile
+  ansible.builtin.lineinfile:
+    path: /opt/redmine/Gemfile
+    insertafter: "source 'https://rubygems.org'"
+    state: present
+    line: "{{ item }}"
+  loop:
+    - "gem 'concurrent-ruby', '< 1.3.5'"
+    - "gem 'blankslate'"
+    - "gem 'puma'"
+
+# Instalar dependências com Bundler
+- name: Instalar dependências com Bundler
+  ansible.builtin.shell: |
+    cd /opt/redmine
+    bundle config set --local without 'development test'
+    bundle install
+
+# Gerar token secreto
+- name: Gerar token secreto
+  ansible.builtin.shell: |
+    cd /opt/redmine
+    bundle exec rake generate_secret_token
+
+# Migrar banco de dados
+- name: Migrar banco de dados
+  ansible.builtin.shell: |
+    cd /opt/redmine
+    RAILS_ENV=production bundle exec rake db:migrate
+
+# Carregar dados padrão no banco de dados
+- name: Carregar dados padrão no banco de dados
+  ansible.builtin.shell: |
+    cd /opt/redmine
+    RAILS_ENV=production REDMINE_LANG=pt-BR bundle exec rake redmine:load_default_data
+
+# Gerar secret_key_base
+- name: Gerar secret_key_base e armazenar em variável
+  ansible.builtin.shell: |
+    cd /opt/redmine
+    RAILS_ENV=production bundle exec rails secret
+  register: secret_key
+
+# Criar arquivo secrets.yml
+- name: Criar arquivo secrets.yml com secret_key_base
+  ansible.builtin.shell: |
+    cat <<EOF > /opt/redmine/config/secrets.yml
+    production:
+      secret_key_base: {{ secret_key.stdout }}
+    EOF
+
+# Definir permissões para secrets.yml
+- name: Definir permissões para secrets.yml
+  ansible.builtin.file:
+    path: /opt/redmine/config/secrets.yml
+    mode: '0600'
+    owner: www-data
+    group: www-data

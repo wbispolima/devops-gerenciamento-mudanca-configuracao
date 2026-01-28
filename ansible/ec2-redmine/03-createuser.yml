@@ -1,0 +1,32 @@
+# ============================================================================
+# 03-CREATEUSER.YML - Criar Usuários do Sistema
+# ============================================================================
+#
+# DESCRICAO:
+# Esta tarefa cria usuários padrão do sistema para fins de acesso,
+# recuperação e manutenção. Estes usuários podem ser usados para:
+# - Acesso remoto via SSH
+# - Recuperação de acesso em caso de emergência
+# - Execução de tarefas administrativas
+#
+# USUARIOS CRIADOS:
+# - admin: Usuário administrativo com acesso ao grupo www-data
+#
+# NOTA:
+# Os usuários são criados sem senha (locked). Para acessar, use:
+# 1. Chave SSH configurada
+# 2. Sudo de outro usuário com privilégios
+#
+# TEMPO ESTIMADO: 1 minuto
+#
+# ============================================================================
+
+---
+- name: Create admin system user and add to www-data group
+  ansible.builtin.user:
+    name: admin
+    comment: "admin system user"
+    shell: /bin/bash
+    create_home: yes
+    groups: www-data
+    append: yes

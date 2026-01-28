@@ -1,0 +1,34 @@
+# ============================================================================
+# 01-UPDATE.YML - Atualizar Sistema Operacional
+# ============================================================================
+#
+# DESCRICAO:
+# Esta tarefa atualiza o sistema operacional Debian 12 para a versão
+# mais recente de todos os pacotes, incluindo atualizações de segurança.
+#
+# TAREFAS EXECUTADAS:
+# 1. Atualizar índice de pacotes APT
+# 2. Fazer upgrade de todos os pacotes (dist-upgrade)
+# 3. Remover pacotes desnecessários
+# 4. Limpar cache APT
+#
+# TEMPO ESTIMADO: 2-5 minutos
+#
+# ============================================================================
+
+- name: Update APT package index
+  ansible.builtin.apt:
+    update_cache: yes
+
+- name: Upgrade all packages to the latest version
+  apt:
+    upgrade: dist
+    update_cache: yes
+
+- name: Autoremove unnecessary packages
+  apt:
+    autoremove: yes
+
+- name: Clean APT cache
+  apt:
+    autoclean: yes

@@ -1,0 +1,36 @@
+# ============================================================================
+# 04-NGINX.YML - Instalar e Configurar Nginx
+# ============================================================================
+#
+# DESCRICAO:
+# Esta tarefa instala e configura o Nginx como servidor web.
+# O Nginx será usado como proxy reverso para encaminhar requisições
+# HTTP para o Redmine.
+#
+# TAREFAS EXECUTADAS:
+# 1. Instalar pacote Nginx
+# 2. Remover configuração padrão do Nginx
+# 3. Reiniciar serviço Nginx
+#
+# NOTA:
+# A configuração específica para Redmine será feita na tarefa 08.
+#
+# TEMPO ESTIMADO: 2-3 minutos
+#
+# ============================================================================
+
+---
+- name: Instalar o Nginx
+  apt:
+    name: nginx
+    state: present
+
+- name: Remover o site padrão do Nginx
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+
+- name: Reiniciar o Nginx
+  service:
+    name: nginx
+    state: restarted
